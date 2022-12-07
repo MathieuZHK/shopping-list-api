@@ -3,7 +3,7 @@ import { PrismaService } from './prisma/prisma.service';
 import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
-import { AtGuard } from './common/guards';
+import { AtGuard } from './auth/common/guards';
 
 @Module({
   imports: [AuthModule, UserModule],
