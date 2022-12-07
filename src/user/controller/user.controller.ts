@@ -4,13 +4,14 @@ import { UserService } from '../service/user.service';
 @Controller('user')
 export class UserController {
   constructor(private userService: UserService) {}
+
   @Get('getAllUsers')
   getAllUsers() {
-    return this.userService.getAllUser();
+    return this.userService.getAllUsers();
   }
 
   @Get('countAllUsers')
   countAllUsers() {
-    return this.userService.countAllUser();
+    return this.userService.countAllUsers();
   }
 }

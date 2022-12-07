@@ -12,9 +12,10 @@ datasource db {
 
 model User {
   id            String    @id @default(uuid()) @unique 
-  nickname      String?
+  nickname      String?   @unique
   email         String?   @unique
   emailVerified DateTime?
-  password      String    @db.VarChar(64)
+  password      String    
   isActive      Boolean
+  refresh_token String?
 }
