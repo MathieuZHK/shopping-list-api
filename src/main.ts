@@ -7,7 +7,7 @@ async function bootstrap() {
   // PRISMA SERVICE ------------------------------------
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
-  // PRISMA SERV
+  // PRISMA SERV ---------------------------------------
   await app.listen(3000);
 }
 bootstrap();
