@@ -1,7 +1,7 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserFormDto } from 'src/user/dto/UserFormDto';
-import { UserService } from 'src/user/service/user.service';
+import { UserFormDto } from '../../user/dto/UserFormDto';
+import { UserService } from '../../user/service/user.service';
 import { Tokens } from '../types';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from '../dto/authDto';
