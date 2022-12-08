@@ -4,10 +4,11 @@ import { AuthModule } from './auth/auth.module';
 import { UserModule } from './user/user.module';
 import { APP_GUARD } from '@nestjs/core';
 import { AtGuard } from './common/guards';
+import { AppController } from './app.controller';
 
 @Module({
   imports: [AuthModule, UserModule],
-  controllers: [],
+  controllers: [AppController],
   providers: [
     PrismaService,
     {
