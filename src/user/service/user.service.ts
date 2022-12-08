@@ -25,7 +25,6 @@ export class UserService {
         refresh_token: null,
       };
       const response = await this.repository.createUser(userConverter);
-      console.log(response);
       return response;
     }
     throw new HttpException(
