@@ -12,8 +12,8 @@ import {
   GetCurrentUser,
   GetCurrentUserId,
   Public,
-} from 'src/auth/common/decorators';
-import { RtGuard } from 'src/auth/common/guards';
+} from 'src/common/decorators';
+import { RtGuard } from 'src/common/guards';
 import { UserFormDto } from 'src/user/dto/UserFormDto';
 import { AuthDto } from '../dto/authDto';
 import { AuthService } from '../service/auth.service';
