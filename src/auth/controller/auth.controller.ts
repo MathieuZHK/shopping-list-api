@@ -24,6 +24,7 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
+  @Public()
   @HttpCode(HttpStatus.CREATED)
   @UsePipes(new ValidationPipe())
   signup(@Body() dto: UserFormDto): Promise<Tokens> {
