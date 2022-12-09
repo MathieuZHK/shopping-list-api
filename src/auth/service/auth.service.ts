@@ -5,12 +5,14 @@ import { UserService } from '../../user/service/user.service';
 import { Tokens } from '../types';
 import * as bcrypt from 'bcrypt';
 import { AuthDto } from '../dto/authDto';
+import { ConfigService } from '@nestjs/config';
 
 @Injectable()
 export class AuthService {
   constructor(
     private userService: UserService,
     private jwtService: JwtService,
+    private config: ConfigService,
   ) {}
 
   async signup(data: UserFormDto): Promise<Tokens> {
@@ -35,17 +37,17 @@ export class AuthService {
     await this.userService.deleteRefreshTokenByUserId(userId);
   }
 
-  async updateRtHash(userId: string, rt: string) {
-    const hash = await bcrypt.hash(rt, 10);
+  async updateRtHash(userId: string, refreshToken: string) {
+    const hash = await bcrypt.hash(refreshToken, 10);
     this.userService.updateRefreshTokenByUserId(userId, hash);
   }
 
-  async refreshTokens(userId: string, rt: string) {
+  async refreshTokens(userId: string, refreshToken: string) {
     const user = await this.userService.getUserById(userId);
     if (!user || !user.refresh_token)
       throw new ForbiddenException('Access denied');
 
-    const rtMatches = await bcrypt.compare(rt, user.refresh_token);
+    const rtMatches = await bcrypt.compare(refreshToken, user.refresh_token);
     if (!rtMatches) throw new ForbiddenException('Access denied');
     const tokens = await this.getTokens(user.id, user.email);
     await this.updateRtHash(user.id, user.refresh_token);
@@ -53,15 +55,15 @@ export class AuthService {
   }
 
   async getTokens(userId: string, email: string): Promise<Tokens> {
-    const [at, rt] = await Promise.all([
+    const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
           sub: userId,
           email,
         },
         {
-          secret: 'at-secret', // .env
-          expiresIn: 60 * 15,
+          secret: this.config.get<string>('SECRET_ACCESS_TOKEN'),
+          expiresIn: this.config.get<string>('JWT_ACCESS_TOKEN_EXPIRE'),
         },
       ),
       this.jwtService.signAsync(
@@ -70,14 +72,14 @@ export class AuthService {
           email,
         },
         {
-          secret: 'rt-secret', // .env
-          expiresIn: 60 * 60 * 24 * 7,
+          secret: this.config.get<string>('SECRET_REFRESH_TOKEN'),
+          expiresIn: this.config.get<string>('JWT_REFRESH_TOKEN_EXPIRE'),
         },
       ),
     ]);
     return {
-      access_token: at,
-      refresh_token: rt,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 }
