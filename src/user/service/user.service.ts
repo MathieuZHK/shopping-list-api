@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { UserFormDto } from '../dto/UserFormDto';
-import { UserRepository } from '../repository/userRepository';
+import { UserFormDto } from '../dto/userForm.dto';
+import { UserRepository } from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
