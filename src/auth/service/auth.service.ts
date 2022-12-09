@@ -1,10 +1,10 @@
 import { ForbiddenException, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserFormDto } from '../../user/dto/UserFormDto';
+import { UserFormDto } from '../../user/dto/userForm.dto';
 import { UserService } from '../../user/service/user.service';
 import { Tokens } from '../types';
 import * as bcrypt from 'bcrypt';
-import { AuthDto } from '../dto/authDto';
+import { AuthDto } from '../dto/auth.dto';
 import { ConfigService } from '@nestjs/config';
 
 @Injectable()
@@ -18,7 +18,7 @@ export class AuthService {
   async signup(data: UserFormDto): Promise<Tokens> {
     const newUser = await this.userService.createUser(data);
     const tokens = await this.getTokens(newUser.id, newUser.email);
-    await this.updateRtHash(newUser.id, tokens.refresh_token);
+    await this.updateRefreshTokenHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
 
@@ -29,7 +29,7 @@ export class AuthService {
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatches) throw new ForbiddenException('Access denied');
     const tokens = await this.getTokens(user.id, user.email);
-    await this.updateRtHash(user.id, tokens.refresh_token);
+    await this.updateRefreshTokenHash(user.id, tokens.refresh_token);
     return tokens;
   }
 
@@ -37,7 +37,7 @@ export class AuthService {
     await this.userService.deleteRefreshTokenByUserId(userId);
   }
 
-  async updateRtHash(userId: string, refreshToken: string) {
+  async updateRefreshTokenHash(userId: string, refreshToken: string) {
     const hash = await bcrypt.hash(refreshToken, 10);
     this.userService.updateRefreshTokenByUserId(userId, hash);
   }
@@ -47,10 +47,13 @@ export class AuthService {
     if (!user || !user.refresh_token)
       throw new ForbiddenException('Access denied');
 
-    const rtMatches = await bcrypt.compare(refreshToken, user.refresh_token);
-    if (!rtMatches) throw new ForbiddenException('Access denied');
+    const refreshTokenMatches = await bcrypt.compare(
+      refreshToken,
+      user.refresh_token,
+    );
+    if (!refreshTokenMatches) throw new ForbiddenException('Access denied');
     const tokens = await this.getTokens(user.id, user.email);
-    await this.updateRtHash(user.id, user.refresh_token);
+    await this.updateRefreshTokenHash(user.id, user.refresh_token);
     return tokens;
   }
 

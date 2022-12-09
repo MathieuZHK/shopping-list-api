@@ -14,8 +14,8 @@ import {
   Public,
 } from '../../common/decorators';
 import { RtGuard } from '../../common/guards';
-import { UserFormDto } from './../../user/dto/UserFormDto';
-import { AuthDto } from '../dto/authDto';
+import { UserFormDto } from '../../user/dto/userForm.dto';
+import { AuthDto } from '../dto/auth.dto';
 import { AuthService } from '../service/auth.service';
 import { Tokens } from '../types';
 
