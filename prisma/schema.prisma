@@ -22,7 +22,6 @@ model User {
   refresh_token   String?
   shoppingLists   ShoppingListOnUsers[]
 
-
 }
 
 model ShoppingList {
@@ -30,6 +29,7 @@ model ShoppingList {
   name            String
   createdAt       DateTime
   users           ShoppingListOnUsers[]
+  products        ProductOnShoppingLists[]
 }
 
 model ShoppingListOnUsers {
@@ -42,4 +42,24 @@ model ShoppingListOnUsers {
   @@id([userId, shoppingListId])
   @@index([userId])
   @@index([shoppingListId])
+}
+
+model Product {
+  id String @id @default(uuid()) @unique
+  name String
+  barcode Int?
+  shoppingLists ProductOnShoppingLists[]
+}
+
+model ProductOnShoppingLists {
+  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id])
+  shoppingListId String
+  product Product @relation(fields: [productId], references: [id])
+  productId String
+
+  @@id([shoppingListId, productId])
+  @@index([shoppingListId])
+  @@index([productId])
+
+
 }
