@@ -11,11 +11,29 @@ datasource db {
 }
 
 model User {
-  id            String    @id @default(uuid()) @unique 
-  nickname      String?   @unique
-  email         String?   @unique
-  emailVerified DateTime?
-  password      String    
-  isActive      Boolean
-  refresh_token String?
+  id              String    @id @default(uuid()) @unique 
+  nickname        String?   @unique
+  email           String?   @unique
+  emailVerified   DateTime?
+  password        String    
+  isActive        Boolean
+  refresh_token   String?
+  shoppingLists   ShoppingListOnUsers[]
+}
+
+model ShoppingList {
+  id              String @id @default(uuid()) @unique
+  name            String
+  createdAt       DateTime
+  users           ShoppingListOnUsers[]
+}
+
+model ShoppingListOnUsers {
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String 
+  shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  shoppingListId  String
+  owner           Boolean
+
+  @@id([userId, shoppingListId])
 }
