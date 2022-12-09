@@ -8,6 +8,8 @@ generator client {
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
+  //PlanetScale does not allow foreing key
+  relationMode = "prisma"
 }
 
 model User {
@@ -19,6 +21,8 @@ model User {
   isActive        Boolean
   refresh_token   String?
   shoppingLists   ShoppingListOnUsers[]
+
+
 }
 
 model ShoppingList {
@@ -36,4 +40,6 @@ model ShoppingListOnUsers {
   owner           Boolean
 
   @@id([userId, shoppingListId])
+  @@index([userId])
+  @@index([shoppingListId])
 }
