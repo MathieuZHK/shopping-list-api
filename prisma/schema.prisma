@@ -29,9 +29,9 @@ model ShoppingList {
 }
 
 model ShoppingListOnUsers {
-  user            User @relation(fields: [userId], references: [id])
+  user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String 
-  shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id])
+  shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
   shoppingListId  String
   owner           Boolean
 
