@@ -33,31 +33,31 @@ model ShoppingList {
 }
 
 model ShoppingListOnUsers {
+  id              String @id @default(uuid()) @unique
   user            User @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId          String 
   shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
   shoppingListId  String
   owner           Boolean
 
-  @@id([userId, shoppingListId])
   @@index([userId])
   @@index([shoppingListId])
 }
 
 model Product {
-  id String @id @default(uuid()) @unique
-  name String
-  barcode Int?
-  shoppingLists ProductOnShoppingLists[]
+  id              String @id @default(uuid()) @unique
+  name            String @unique
+  barcode         Int? @unique
+  shoppingLists   ProductOnShoppingLists[]
 }
 
 model ProductOnShoppingLists {
-  shoppingList ShoppingList @relation(fields: [shoppingListId], references: [id])
-  shoppingListId String
-  product Product @relation(fields: [productId], references: [id])
-  productId String
+  id              String @id @default(uuid()) @unique
+  shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
+  shoppingListId  String
+  product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  productId       String 
 
-  @@id([shoppingListId, productId])
   @@index([shoppingListId])
   @@index([productId])
 

@@ -41,13 +41,6 @@ export class UserService {
     return await this.repository.getUserById(userId);
   }
 
-  async getAllUsers() {
-    return await this.repository.getAllUsers();
-  }
-  async countAllUsers(): Promise<number> {
-    return await this.repository.countAllUsers();
-  }
-
   async checkUserExistByEmailOrNickname(email: string, nickname: string) {
     return await this.repository.checkIfUserExistByEmailOrNickname(
       email,

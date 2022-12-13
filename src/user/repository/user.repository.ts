@@ -134,4 +134,25 @@ export class UserRepository {
       },
     });
   }
+
+  async getShoppingListByUserId(userId: string) {
+    return this.prisma.user.findMany({
+      where: {
+        id: userId,
+      },
+      include: {
+        shoppingLists: {
+          select: {
+            shoppingList: {
+              select: {
+                name: true,
+                products: true,
+                createdAt: true,
+              },
+            },
+          },
+        },
+      },
+    });
+  }
 }
