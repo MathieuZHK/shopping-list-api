@@ -30,6 +30,22 @@ export class ProductRepository {
     });
   }
 
+  async getProductByName(productName: string): Promise<Product> {
+    return this.prisma.product.findUnique({
+      where: {
+        name: productName,
+      },
+    });
+  }
+
+  async getProductByBarcode(productBarcode: number): Promise<Product> {
+    return this.prisma.product.findUnique({
+      where: {
+        barcode: productBarcode,
+      },
+    });
+  }
+
   async deleteProductById(productId: string): Promise<Product> {
     return this.prisma.product.delete({
       where: {
@@ -46,11 +62,18 @@ export class ProductRepository {
     });
   }
 
-  async createProductOnShoppingList(productId: string, shoppingListId: string) {
+  async createProductOnShoppingList(
+    productId: string,
+    shoppingListId: string,
+    price: number,
+    qty: number,
+  ): Promise<ProductOnShoppingLists> {
     return this.prisma.productOnShoppingLists.create({
       data: {
         productId: productId,
         shoppingListId: shoppingListId,
+        price: price,
+        qty: qty,
       },
     });
   }
@@ -58,6 +81,19 @@ export class ProductRepository {
   async createProductListOnShoppingList(data: ProductOnShoppingLists[]) {
     return this.prisma.productOnShoppingLists.createMany({
       data: data,
+    });
+  }
+
+  async updateProductOnShoppingList(data: ProductOnShoppingLists) {
+    return this.prisma.productOnShoppingLists.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        price: data.price,
+        qty: data.qty,
+        productId: data.productId,
+      },
     });
   }
 }

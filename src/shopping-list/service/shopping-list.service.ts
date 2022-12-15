@@ -1,5 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { ShoppingList } from '@prisma/client';
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
+import { ProductOnShoppingLists, ShoppingList } from '@prisma/client';
 import { ProductService } from 'src/product/service/product.service';
 import { ShoppingListDto } from '../dto/shopping-list.dto';
 import { ShoppingListRepository } from '../repository/shopping-list.repository';
@@ -8,6 +14,7 @@ import { ShoppingListRepository } from '../repository/shopping-list.repository';
 export class ShoppingListService {
   constructor(
     private repository: ShoppingListRepository,
+    @Inject(forwardRef(() => ProductService))
     private productService: ProductService,
   ) {}
 
@@ -38,10 +45,17 @@ export class ShoppingListService {
         );
         if (!responseProduct) throw new Error('Product creation error');
 
+        const productOnShoppingListEntity: ProductOnShoppingLists = {
+          id: null,
+          productId: responseProduct.id,
+          shoppingListId: responseCreatedShoppingList.id,
+          price: product.price,
+          qty: product.qty,
+        };
+
         const responseProductOnShoppingList =
           await this.productService.createProductOnShoppingList(
-            responseProduct.id,
-            responseCreatedShoppingList.id,
+            productOnShoppingListEntity,
           );
 
         if (!responseProductOnShoppingList)
@@ -85,6 +99,20 @@ export class ShoppingListService {
       shoppingListId,
       owner,
     );
+  }
+
+  async countUserIdExistForShoppingListId(
+    userId: string,
+    shoppingListId: string,
+  ): Promise<boolean> {
+    const response = await this.repository.countUserIdExistForShoppingListId(
+      userId,
+      shoppingListId,
+    );
+
+    if (response === 0) return false;
+
+    return true;
   }
 
   convertShoppingListDtoToShoppingListEntity(

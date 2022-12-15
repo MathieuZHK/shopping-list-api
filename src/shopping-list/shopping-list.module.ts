@@ -11,8 +11,8 @@ import { ShoppingListService } from './service/shopping-list.service';
   providers: [
     ShoppingListService,
     ShoppingListRepository,
-    ProductService,
     ProductRepository,
+    ProductService,
     PrismaService,
   ],
 })

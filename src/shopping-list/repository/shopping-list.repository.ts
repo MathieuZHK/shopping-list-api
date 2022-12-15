@@ -56,4 +56,18 @@ export class ShoppingListRepository {
       },
     });
   }
+
+  async countUserIdExistForShoppingListId(
+    userId: string,
+    shoppingListId: string,
+  ) {
+    return this.prisma.shoppingListOnUsers.count({
+      where: {
+        userId: userId,
+        AND: {
+          shoppingListId: shoppingListId,
+        },
+      },
+    });
+  }
 }

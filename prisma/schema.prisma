@@ -57,6 +57,8 @@ model ProductOnShoppingLists {
   shoppingListId  String
   product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
   productId       String 
+  qty             Int?
+  price           Int?
 
   @@index([shoppingListId])
   @@index([productId])
