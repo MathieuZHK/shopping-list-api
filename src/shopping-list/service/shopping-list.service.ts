@@ -115,6 +115,23 @@ export class ShoppingListService {
     return true;
   }
 
+  async getShoppingListByUserId(userId: string) {
+    const responseShoppingLists = await this.repository.getShoppingListByUserId(
+      userId,
+    );
+
+    if (!responseShoppingLists)
+      throw new HttpException(
+        {
+          message: 'No dshopping list found for userId : ' + userId + ' ',
+          Error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return responseShoppingLists;
+  }
+
   convertShoppingListDtoToShoppingListEntity(
     data: ShoppingListDto,
   ): ShoppingList {

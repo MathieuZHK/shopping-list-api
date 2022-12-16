@@ -35,9 +35,57 @@ export class ProductService {
     return await this.repository.deleteProductById(productId);
   }
 
-  async deleteProductOnShoppingList(productOnShoppingListId: string) {
-    return await this.repository.deleteProductOnShoppingList(
-      productOnShoppingListId,
+  async deleteProductOnShoppingList(
+    userId: string,
+    data: ProductShoppingListDto,
+  ) {
+    const responseShoppingList =
+      await this.shoppingListService.countUserIdExistForShoppingListId(
+        userId,
+        data.id,
+      );
+
+    if (!responseShoppingList)
+      throw new HttpException(
+        {
+          message:
+            'No ShoppingListId : ' +
+            data.shoppingListId +
+            ' for userId : ' +
+            userId,
+          Error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.repository.deleteProductOnShoppingList(data.id);
+  }
+
+  async updateProductOnShoppingList(
+    userId: string,
+    data: ProductShoppingListDto,
+  ) {
+    const responseShoppingList =
+      await this.shoppingListService.countUserIdExistForShoppingListId(
+        userId,
+        data.id,
+      );
+
+    if (!responseShoppingList)
+      throw new HttpException(
+        {
+          message:
+            'No ShoppingListId : ' +
+            data.shoppingListId +
+            ' for userId : ' +
+            userId,
+          Error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.repository.updateProductOnShoppingList(
+      this.convertProductShoppingListDtoToProductOnShoppingListEntity(data),
     );
   }
 
