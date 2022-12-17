@@ -1,10 +1,13 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
+  Put,
 } from '@nestjs/common';
 import { ShoppingList, ShoppingListOnUsers } from '@prisma/client';
 import { GetCurrentUserId } from 'src/common/decorators';
@@ -32,7 +35,36 @@ export class ShoppingListController {
     return this.shoppingListService.getShoppingListByUserId(userId);
   }
 
-  // DELETE ShoppingList
-  // UPDATE ShoppingList
-  // GET Products on shopping list by shoppingListID
+  @Delete('deleteShoppingList')
+  @HttpCode(HttpStatus.OK)
+  deleteShoppingListById(
+    @GetCurrentUserId() userId: string,
+    @Param('shoppingListId') shoppingListId: string,
+  ) {
+    return this.shoppingListService.deleteShoppingListByIdAndUserId(
+      userId,
+      shoppingListId,
+    );
+  }
+
+  @Put('updateShoppingList')
+  @HttpCode(HttpStatus.OK)
+  updateShoppingListById(
+    @GetCurrentUserId() userId: string,
+    @Body() dto: ShoppingListDto,
+  ) {
+    return this.shoppingListService.updateShoppingList(userId, dto);
+  }
+
+  @Get('getProductsOnShoopingListByShoppingId')
+  @HttpCode(HttpStatus.FOUND)
+  getProductsOnShoppingListByShoppingId(
+    @GetCurrentUserId() userId: string,
+    @Param('shoppingListId') shoppingListId: string,
+  ) {
+    return this.shoppingListService.getProductsListByShoppingListId(
+      userId,
+      shoppingListId,
+    );
+  }
 }

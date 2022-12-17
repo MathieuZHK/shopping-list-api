@@ -40,7 +40,7 @@ export class ProductService {
     data: ProductShoppingListDto,
   ) {
     const responseShoppingList =
-      await this.shoppingListService.countUserIdExistForShoppingListId(
+      await this.shoppingListService.getUserIdExistForShoppingListId(
         userId,
         data.id,
       );
@@ -66,7 +66,7 @@ export class ProductService {
     data: ProductShoppingListDto,
   ) {
     const responseShoppingList =
-      await this.shoppingListService.countUserIdExistForShoppingListId(
+      await this.shoppingListService.getUserIdExistForShoppingListId(
         userId,
         data.id,
       );
@@ -106,7 +106,7 @@ export class ProductService {
 
   async addProductOnShoppingList(userId: string, data: ProductShoppingListDto) {
     const responseCheckIfExistShoppingListForUserIs =
-      await this.shoppingListService.countUserIdExistForShoppingListId(
+      await this.shoppingListService.getUserIdExistForShoppingListId(
         userId,
         data.shoppingListId,
       );

@@ -35,6 +35,7 @@ export class ShoppingListRepository {
       include: {
         product: {
           select: {
+            id: true,
             name: true,
             barcode: true,
           },
@@ -79,6 +80,14 @@ export class ShoppingListRepository {
         AND: {
           shoppingListId: shoppingListId,
         },
+      },
+    });
+  }
+
+  async deleteShoppingListById(shoppingListId: string) {
+    return this.prisma.shoppingList.delete({
+      where: {
+        id: shoppingListId,
       },
     });
   }

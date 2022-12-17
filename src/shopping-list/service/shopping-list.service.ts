@@ -101,7 +101,35 @@ export class ShoppingListService {
     );
   }
 
-  async countUserIdExistForShoppingListId(
+  async updateShoppingList(userId: string, data: ShoppingListDto) {
+    const responseIfUserIdExistForShoppingList =
+      await this.getUserIdExistForShoppingListId(userId, data.id);
+
+    if (!responseIfUserIdExistForShoppingList)
+      throw new HttpException(
+        { message: 'No data found for userId ' + userId + ' ', Error },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.repository.updateShoppingList(
+      this.convertShoppingListDtoToShoppingListEntity(data),
+    );
+  }
+
+  async deleteShoppingListByIdAndUserId(userId: string, shoppingId: string) {
+    const responseIfShoppingListExist =
+      await this.getUserIdExistForShoppingListId(userId, shoppingId);
+
+    if (!responseIfShoppingListExist)
+      throw new HttpException(
+        { message: 'No data found for userId ' + userId + ' ', Error },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.repository.deleteShoppingListById(shoppingId);
+  }
+
+  async getUserIdExistForShoppingListId(
     userId: string,
     shoppingListId: string,
   ): Promise<boolean> {
@@ -130,6 +158,22 @@ export class ShoppingListService {
       );
 
     return responseShoppingLists;
+  }
+
+  async getProductsListByShoppingListId(
+    userId: string,
+    shoppingListId: string,
+  ) {
+    const responseIfUserIdExistForShoppingList =
+      await this.getUserIdExistForShoppingListId(userId, shoppingListId);
+
+    if (!responseIfUserIdExistForShoppingList)
+      throw new HttpException(
+        { message: 'No data found for userId ' + userId + ' ', Error },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.repository.getProductsByShoppingListId(shoppingListId);
   }
 
   convertShoppingListDtoToShoppingListEntity(
