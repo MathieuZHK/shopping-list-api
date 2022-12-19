@@ -42,7 +42,6 @@ export class ShoppingListController {
     @GetCurrentUserId() userId: string,
     @Param('id') shoppingListId: string,
   ) {
-    console.log(shoppingListId);
     return this.shoppingListService.deleteShoppingListByIdAndUserId(
       userId,
       shoppingListId,

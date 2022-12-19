@@ -123,7 +123,6 @@ export class ShoppingListService {
     userId: string,
     shoppingListId: string,
   ) {
-    console.log(shoppingListId);
     const responseIfShoppingListExist =
       await this.getUserIdExistForShoppingListId(userId, shoppingListId);
 
