@@ -16,13 +16,13 @@ import { ProductService } from '../service/product.service';
 export class ProductController {
   constructor(private productService: ProductService) {}
 
-  @Post('createProduct')
+  @Post('product')
   @HttpCode(HttpStatus.CREATED)
   createProduct(@Body() dto: ProductDto) {
     return this.productService.createProduct(dto);
   }
 
-  @Post('createProductOnShoppingList')
+  @Post('productOnShoppingList')
   @HttpCode(HttpStatus.CREATED)
   createProductOnShoppingList(
     @Body() dto: ProductShoppingListDto,
@@ -31,7 +31,7 @@ export class ProductController {
     return this.productService.addProductOnShoppingList(userId, dto);
   }
 
-  @Put('updateProductOnShoppingList')
+  @Put('productOnShoppingList')
   @HttpCode(HttpStatus.OK)
   updateProductOnShoppingList(
     @Body() dto: ProductShoppingListDto,
@@ -40,7 +40,7 @@ export class ProductController {
     return this.productService.updateProductOnShoppingList(userId, dto);
   }
 
-  @Delete('deleteProductOnShoppingList')
+  @Delete('productOnShoppingList')
   @HttpCode(HttpStatus.OK)
   deleteProductOnShoppingList(
     @GetCurrentUserId() userId: string,
