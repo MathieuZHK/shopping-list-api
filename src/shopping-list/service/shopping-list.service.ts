@@ -7,7 +7,9 @@ import {
 } from '@nestjs/common';
 import { ProductOnShoppingLists, ShoppingList } from '@prisma/client';
 import { ProductService } from 'src/product/service/product.service';
+import { UserService } from 'src/user/service/user.service';
 import { ShoppingListDto } from '../dto/shopping-list.dto';
+import { ShoppingListToShareDto } from '../dto/shopping-listToShare.dto';
 import { ShoppingListRepository } from '../repository/shopping-list.repository';
 
 @Injectable()
@@ -16,6 +18,7 @@ export class ShoppingListService {
     private repository: ShoppingListRepository,
     @Inject(forwardRef(() => ProductService))
     private productService: ProductService,
+    private userService: UserService,
   ) {}
 
   async createShoppingList(userId: string, data: ShoppingListDto) {
@@ -132,10 +135,12 @@ export class ShoppingListService {
   async getUserIdExistForShoppingListId(
     userId: string,
     shoppingListId: string,
+    isOwner?: boolean,
   ): Promise<boolean> {
     const response = await this.repository.countUserIdExistForShoppingListId(
       userId,
       shoppingListId,
+      isOwner,
     );
 
     if (response === 0) return false;
@@ -151,7 +156,7 @@ export class ShoppingListService {
     if (!responseShoppingLists)
       throw new HttpException(
         {
-          message: 'No dshopping list found for userId : ' + userId + ' ',
+          message: 'No shopping list found for userId : ' + userId + ' ',
           Error,
         },
         HttpStatus.BAD_REQUEST,
@@ -174,6 +179,58 @@ export class ShoppingListService {
       );
 
     return await this.repository.getProductsByShoppingListId(shoppingListId);
+  }
+
+  async shareShoppingListToUserId(
+    userIdOwner: string,
+    data: ShoppingListToShareDto,
+  ) {
+    const responseIfUserIsOwnerExistAndIsOwnerForShoppingList =
+      await this.getUserIdExistForShoppingListId(
+        userIdOwner,
+        data.shoppingListId,
+        true,
+      );
+
+    if (!responseIfUserIsOwnerExistAndIsOwnerForShoppingList)
+      throw new HttpException(
+        {
+          message:
+            'No data found for userId ' +
+            userIdOwner +
+            ' or user is not owner ',
+          Error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    if (!data.userEmailToShare)
+      throw new HttpException(
+        {
+          message: 'No data found for userEmailToShare ',
+          Error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    const responseGetUserByEmail = await this.userService.getUserByEmail(
+      data.userEmailToShare,
+    );
+
+    if (!responseGetUserByEmail.email)
+      throw new HttpException(
+        {
+          message: 'User dont exist for ' + data.userEmailToShare + ' ',
+          Error,
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+
+    return await this.createShoppingListOnUser(
+      responseGetUserByEmail.id,
+      data.shoppingListId,
+      false,
+    );
   }
 
   convertShoppingListDtoToShoppingListEntity(

@@ -1,4 +1,9 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { User } from '@prisma/client';
 import { UserFormDto } from '../dto/userForm.dto';
 import { UserRepository } from '../repository/user.repository';
@@ -55,7 +60,41 @@ export class UserService {
     );
   }
 
+  async updateUser(userId: string, data: UserFormDto) {
+    if (!data.oldPassword)
+      throw new ForbiddenException('Please enter your old password');
+    const user = await this.getUserByEmail(data.email);
+    if (!user) throw new ForbiddenException('Access denied');
+    const passwordMatches = await bcrypt.compare(
+      data.oldPassword,
+      user.password,
+    );
+    if (!passwordMatches) throw new ForbiddenException('Access denied');
+    return await this.repository.updateUser(
+      await this.convertUserFormDtoToUserEntity(userId, data),
+    );
+  }
+
+  async deleteByUserId(userId: string) {
+    return await this.repository.deleteUser(userId);
+  }
+
   async deleteRefreshTokenByUserId(userId: string) {
     return await this.repository.deleteRefreshTokenByUserId(userId);
+  }
+
+  async convertUserFormDtoToUserEntity(userId: string, data: UserFormDto) {
+    const hash = await bcrypt.hash(data.password, 10);
+    const userEntity: User = {
+      id: userId,
+      email: data.email,
+      emailVerified: null,
+      nickname: data.nickname,
+      isActive: data.isActive,
+      password: hash,
+      refresh_token: null,
+    };
+
+    return userEntity;
   }
 }
