@@ -12,6 +12,7 @@ import {
 import { ShoppingList, ShoppingListOnUsers } from '@prisma/client';
 import { GetCurrentUserId } from 'src/common/decorators';
 import { ShoppingListDto } from '../dto/shopping-list.dto';
+import { ShoppingListToShareDto } from '../dto/shopping-listToShare.dto';
 import { ShoppingListService } from '../service/shopping-list.service';
 
 @Controller('shopping-list')
@@ -66,5 +67,14 @@ export class ShoppingListController {
       userId,
       shoppingListId,
     );
+  }
+
+  @Post('shareShoppingListToUser')
+  @HttpCode(HttpStatus.CREATED)
+  shareShoopingListToUser(
+    @GetCurrentUserId() userId: string,
+    @Body() dto: ShoppingListToShareDto,
+  ) {
+    return this.shoppingListService.shareShoppingListToUserId(userId, dto);
   }
 }
