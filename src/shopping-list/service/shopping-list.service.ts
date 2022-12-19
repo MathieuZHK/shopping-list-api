@@ -119,9 +119,13 @@ export class ShoppingListService {
     );
   }
 
-  async deleteShoppingListByIdAndUserId(userId: string, shoppingId: string) {
+  async deleteShoppingListByIdAndUserId(
+    userId: string,
+    shoppingListId: string,
+  ) {
+    console.log(shoppingListId);
     const responseIfShoppingListExist =
-      await this.getUserIdExistForShoppingListId(userId, shoppingId);
+      await this.getUserIdExistForShoppingListId(userId, shoppingListId);
 
     if (!responseIfShoppingListExist)
       throw new HttpException(
@@ -129,7 +133,7 @@ export class ShoppingListService {
         HttpStatus.BAD_REQUEST,
       );
 
-    return await this.repository.deleteShoppingListById(shoppingId);
+    return await this.repository.deleteShoppingListById(shoppingListId);
   }
 
   async getUserIdExistForShoppingListId(

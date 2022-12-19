@@ -28,7 +28,7 @@ export class ShoppingListController {
     return this.shoppingListService.createShoppingList(userId, dto);
   }
 
-  @Get('getShoppingListByUserId')
+  @Get('shoppingListByUserId')
   @HttpCode(HttpStatus.OK)
   getShoppingListByUserId(
     @GetCurrentUserId() userId: string,
@@ -36,19 +36,20 @@ export class ShoppingListController {
     return this.shoppingListService.getShoppingListByUserId(userId);
   }
 
-  @Delete('deleteShoppingList')
+  @Delete('shoppingList/:id')
   @HttpCode(HttpStatus.OK)
   deleteShoppingListById(
     @GetCurrentUserId() userId: string,
-    @Param('shoppingListId') shoppingListId: string,
+    @Param('id') shoppingListId: string,
   ) {
+    console.log(shoppingListId);
     return this.shoppingListService.deleteShoppingListByIdAndUserId(
       userId,
       shoppingListId,
     );
   }
 
-  @Put('updateShoppingList')
+  @Put('shoppingList')
   @HttpCode(HttpStatus.OK)
   updateShoppingListById(
     @GetCurrentUserId() userId: string,
@@ -57,7 +58,7 @@ export class ShoppingListController {
     return this.shoppingListService.updateShoppingList(userId, dto);
   }
 
-  @Get('getProductsOnShoopingListByShoppingId')
+  @Get('productsOnShoopingListByShoppingId')
   @HttpCode(HttpStatus.FOUND)
   getProductsOnShoppingListByShoppingId(
     @GetCurrentUserId() userId: string,
