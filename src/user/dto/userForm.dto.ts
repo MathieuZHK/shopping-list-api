@@ -6,7 +6,7 @@ import {
   MaxLength,
   MinLength,
 } from 'class-validator';
-import { Match } from 'src/common/decorators/password-matches.decoratos';
+import { Match } from '../../common/decorators/password-matches.decoratos';
 
 export class UserFormDto {
   @IsNotEmpty()
