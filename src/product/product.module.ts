@@ -5,12 +5,16 @@ import { ShoppingListService } from 'src/shopping-list/service/shopping-list.ser
 import { ProductRepository } from './repository/product.repository';
 import { ProductService } from './service/product.service';
 import { ProductController } from './controller/product.controller';
+import { UserRepository } from 'src/user/repository/user.repository';
+import { UserService } from 'src/user/service/user.service';
 
 @Module({
   controllers: [ProductController],
   providers: [
     ProductService,
     ProductRepository,
+    UserService,
+    UserRepository,
     ShoppingListRepository,
     ShoppingListService,
     PrismaService,

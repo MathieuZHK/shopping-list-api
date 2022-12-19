@@ -73,12 +73,14 @@ export class ShoppingListRepository {
   async countUserIdExistForShoppingListId(
     userId: string,
     shoppingListId: string,
+    isOwner?: boolean,
   ) {
     return this.prisma.shoppingListOnUsers.count({
       where: {
         userId: userId,
         AND: {
           shoppingListId: shoppingListId,
+          owner: isOwner,
         },
       },
     });
