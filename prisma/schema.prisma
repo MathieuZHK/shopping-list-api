@@ -9,7 +9,7 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
   //PlanetScale does not allow foreing key
-  //relationMode = "prisma"
+  relationMode = "prisma"
 }
 
 model User {
