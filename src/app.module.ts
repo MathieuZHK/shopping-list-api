@@ -8,6 +8,7 @@ import { AppController } from './app.controller';
 import { ConfigModule } from '@nestjs/config';
 import { ShoppingListModule } from './shopping-list/shopping-list.module';
 import { ProductModule } from './product/product.module';
+import { OpenfoodfactsModule } from './openfoodfacts/openfoodfacts.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { ProductModule } from './product/product.module';
     ConfigModule.forRoot({ isGlobal: true }),
     ShoppingListModule,
     ProductModule,
+    OpenfoodfactsModule,
   ],
   controllers: [AppController],
   providers: [
