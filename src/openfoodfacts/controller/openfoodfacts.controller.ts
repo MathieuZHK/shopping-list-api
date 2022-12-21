@@ -6,7 +6,7 @@ import { OpenfoodfactsService } from '../service/openfoodfacts.service';
 export class OpenfoodfactsController {
   constructor(private openfoodfactsService: OpenfoodfactsService) {}
 
-  @Get('openfoodfactsProductsByCode/:code')
+  @Get(':code')
   @Public()
   @HttpCode(HttpStatus.OK)
   getOpenfoodfactsProductsByCode(@Param('code') code: number) {

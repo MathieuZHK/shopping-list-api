@@ -14,13 +14,13 @@ import { UserService } from '../service/user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Delete('user')
+  @Delete()
   @HttpCode(HttpStatus.OK)
   deleteUserByUserId(@GetCurrentUser() userId: string) {
     return this.userService.deleteByUserId(userId);
   }
 
-  @Put('user')
+  @Put()
   @HttpCode(HttpStatus.OK)
   updateUser(@GetCurrentUser() userId: string, @Body() dto: UserFormDto) {
     return this.userService.updateUser(userId, dto);
