@@ -36,7 +36,7 @@ export class ShoppingListController {
     return this.shoppingListService.getShoppingListByUserId(userId);
   }
 
-  @Delete('shoppingList/:id')
+  @Delete(':id')
   @HttpCode(HttpStatus.OK)
   deleteShoppingListById(
     @GetCurrentUserId() userId: string,
@@ -48,7 +48,7 @@ export class ShoppingListController {
     );
   }
 
-  @Put('shoppingList')
+  @Put()
   @HttpCode(HttpStatus.OK)
   updateShoppingListById(
     @GetCurrentUserId() userId: string,
