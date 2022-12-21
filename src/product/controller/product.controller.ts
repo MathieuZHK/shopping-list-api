@@ -16,7 +16,7 @@ import { ProductService } from '../service/product.service';
 export class ProductController {
   constructor(private productService: ProductService) {}
 
-  @Post('product')
+  @Post()
   @HttpCode(HttpStatus.CREATED)
   createProduct(@Body() dto: ProductDto) {
     return this.productService.createProduct(dto);
