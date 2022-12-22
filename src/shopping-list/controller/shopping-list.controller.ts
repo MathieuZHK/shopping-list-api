@@ -57,7 +57,7 @@ export class ShoppingListController {
     return this.shoppingListService.updateShoppingList(userId, dto);
   }
 
-  @Get('productsOnShoopingListByShoppingId')
+  @Get('productsOnShoppingListByShoppingId')
   @HttpCode(HttpStatus.FOUND)
   getProductsOnShoppingListByShoppingId(
     @GetCurrentUserId() userId: string,
