@@ -8,6 +8,7 @@ import { User } from '@prisma/client';
 import { UserFormDto } from '../dto/userForm.dto';
 import { UserRepository } from '../repository/user.repository';
 import * as bcrypt from 'bcrypt';
+import { UserDto } from '../dto/user.dto';
 
 @Injectable()
 export class UserService {
@@ -44,6 +45,10 @@ export class UserService {
 
   async getUserById(userId: string) {
     return await this.repository.getUserById(userId);
+  }
+  async getUserDtoById(userId: string) {
+    const userEntity = await this.repository.getUserById(userId);
+    return this.convertUserEntityToUserDto(userEntity);
   }
 
   async checkUserExistByEmailOrNickname(email: string, nickname: string) {
@@ -96,5 +101,16 @@ export class UserService {
     };
 
     return userEntity;
+  }
+
+  async convertUserEntityToUserDto(userEntity: User) {
+    const userDto: UserDto = {
+      id: userEntity.id,
+      nickname: userEntity.nickname,
+      email: userEntity.email,
+      isActive: userEntity.isActive,
+    };
+
+    return userDto;
   }
 }

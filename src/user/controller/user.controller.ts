@@ -2,11 +2,12 @@ import {
   Body,
   Controller,
   Delete,
+  Get,
   HttpCode,
   HttpStatus,
   Put,
 } from '@nestjs/common';
-import { GetCurrentUser } from 'src/common/decorators';
+import { GetCurrentUserId } from 'src/common/decorators';
 import { UserFormDto } from '../dto/userForm.dto';
 import { UserService } from '../service/user.service';
 
@@ -14,15 +15,22 @@ import { UserService } from '../service/user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
+  @Get()
+  @HttpCode(HttpStatus.OK)
+  getCurrentUserInfoById(@GetCurrentUserId() userId: string) {
+    console.log(userId);
+    return this.userService.getUserDtoById(userId);
+  }
+
   @Delete()
   @HttpCode(HttpStatus.OK)
-  deleteUserByUserId(@GetCurrentUser() userId: string) {
+  deleteUserByUserId(@GetCurrentUserId() userId: string) {
     return this.userService.deleteByUserId(userId);
   }
 
   @Put()
   @HttpCode(HttpStatus.OK)
-  updateUser(@GetCurrentUser() userId: string, @Body() dto: UserFormDto) {
+  updateUser(@GetCurrentUserId() userId: string, @Body() dto: UserFormDto) {
     return this.userService.updateUser(userId, dto);
   }
 }
