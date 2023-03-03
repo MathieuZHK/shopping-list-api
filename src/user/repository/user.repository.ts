@@ -19,7 +19,7 @@ export class UserRepository {
     });
   }
 
-  async getUserById(userId: string): Promise<User | null> {
+  async getUserById(userId: string): Promise<User> {
     return this.prisma.user.findUnique({
       where: {
         id: userId,

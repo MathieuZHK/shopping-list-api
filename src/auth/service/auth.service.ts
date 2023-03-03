@@ -17,7 +17,11 @@ export class AuthService {
 
   async signup(data: UserFormDto): Promise<Tokens> {
     const newUser = await this.userService.createUser(data);
-    const tokens = await this.getTokens(newUser.id, newUser.email);
+    const tokens = await this.getTokens(
+      newUser.id,
+      newUser.email,
+      newUser.nickname,
+    );
     await this.updateRefreshTokenHash(newUser.id, tokens.refresh_token);
     return tokens;
   }
@@ -28,7 +32,7 @@ export class AuthService {
     if (!user) throw new ForbiddenException('Access denied');
     const passwordMatches = await bcrypt.compare(dto.password, user.password);
     if (!passwordMatches) throw new ForbiddenException('Access denied');
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.nickname);
     await this.updateRefreshTokenHash(user.id, tokens.refresh_token);
     return tokens;
   }
@@ -52,12 +56,16 @@ export class AuthService {
       user.refresh_token,
     );
     if (!refreshTokenMatches) throw new ForbiddenException('Access denied');
-    const tokens = await this.getTokens(user.id, user.email);
+    const tokens = await this.getTokens(user.id, user.email, user.nickname);
     await this.updateRefreshTokenHash(user.id, user.refresh_token);
     return tokens;
   }
 
-  async getTokens(userId: string, email: string): Promise<Tokens> {
+  async getTokens(
+    userId: string,
+    email: string,
+    nickname: string,
+  ): Promise<Tokens> {
     const [accessToken, refreshToken] = await Promise.all([
       this.jwtService.signAsync(
         {
@@ -83,6 +91,8 @@ export class AuthService {
     return {
       access_token: accessToken,
       refresh_token: refreshToken,
+      nickname: nickname,
+      email: email,
     };
   }
 }
