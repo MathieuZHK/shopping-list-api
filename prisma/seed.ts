@@ -1,5 +1,4 @@
 import { PrismaClient } from '@prisma/client';
-import { getProductDataForSeed } from './product/productSeed';
 import { getShoppingListDataForSeed } from './shoppingList/shoppingListSeed';
 import { getUserDataForSeed } from './user/userSeed';
 const prisma = new PrismaClient();
@@ -31,19 +30,6 @@ async function main() {
       },
     });
     console.log(shoppingList);
-  }
-
-  const productData = await getProductDataForSeed();
-  for (const product of productData) {
-    await prisma.product.upsert({
-      where: { id: product.id },
-      update: {},
-      create: {
-        name: product.name,
-        barcode: product.barcode,
-      },
-    });
-    console.log(product);
   }
 }
 

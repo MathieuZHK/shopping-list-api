@@ -4,23 +4,18 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Put,
 } from '@nestjs/common';
 import { GetCurrentUserId } from 'src/common/decorators';
-import { ProductDto } from '../dto/product.dto';
+import { ProductCartInfoDto } from '../dto/productCartInfoDto';
 import { ProductShoppingListDto } from '../dto/productShoppingList.dto';
 import { ProductService } from '../service/product.service';
 
 @Controller('product')
 export class ProductController {
   constructor(private productService: ProductService) {}
-
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  createProduct(@Body() dto: ProductDto) {
-    return this.productService.createProduct(dto);
-  }
 
   @Post('productOnShoppingList')
   @HttpCode(HttpStatus.CREATED)
@@ -40,12 +35,24 @@ export class ProductController {
     return this.productService.updateProductOnShoppingList(userId, dto);
   }
 
-  @Delete('productOnShoppingList')
+  @Put('productOnShoppingListInCart')
+  @HttpCode(HttpStatus.OK)
+  updateProductOnShoppingListInCart(
+    @Body() dto: ProductCartInfoDto,
+    @GetCurrentUserId() userId: string,
+  ) {
+    return this.productService.updateProductOnShoppingListInCart(userId, dto);
+  }
+
+  @Delete(':id')
   @HttpCode(HttpStatus.OK)
   deleteProductOnShoppingList(
     @GetCurrentUserId() userId: string,
-    @Body() dto: ProductShoppingListDto,
+    @Param('id') productOnShoppingListId: string,
   ) {
-    return this.productService.deleteProductOnShoppingList(userId, dto);
+    return this.productService.deleteProductOnShoppingList(
+      userId,
+      productOnShoppingListId,
+    );
   }
 }

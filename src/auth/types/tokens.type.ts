@@ -3,4 +3,5 @@ export type Tokens = {
   refresh_token: string;
   nickname: string;
   email: string;
+  id: string;
 };

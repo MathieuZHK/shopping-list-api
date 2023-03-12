@@ -45,24 +45,18 @@ model ShoppingListOnUsers {
   @@index([shoppingListId])
 }
 
-model Product {
-  id              String @id @default(uuid()) @unique
-  name            String @unique
-  barcode         Int? @unique
-  shoppingLists   ProductOnShoppingLists[]
-}
-
 model ProductOnShoppingLists {
   id              String @id @default(uuid()) @unique
   shoppingList    ShoppingList @relation(fields: [shoppingListId], references: [id], onDelete: Cascade)
   shoppingListId  String
-  product         Product @relation(fields: [productId], references: [id], onDelete: Cascade)
-  productId       String 
+  name            String
+  barcode         Int?
   qty             Int?
-  price           Int?
+  price           Float?
+  inCart          Boolean @default(false)      
 
   @@index([shoppingListId])
-  @@index([productId])
+
 
 
 }

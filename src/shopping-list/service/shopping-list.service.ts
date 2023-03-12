@@ -5,7 +5,8 @@ import {
   Inject,
   Injectable,
 } from '@nestjs/common';
-import { ProductOnShoppingLists, ShoppingList } from '@prisma/client';
+import { ShoppingList } from '@prisma/client';
+
 import { ProductService } from 'src/product/service/product.service';
 import { UserService } from 'src/user/service/user.service';
 import { ShoppingListDto } from '../dto/shopping-list.dto';
@@ -35,44 +36,16 @@ export class ShoppingListService {
         },
         HttpStatus.BAD_REQUEST,
       );
-
     const responseCreatedShoppingList =
       await this.repository.createShoppingList(
-        this.convertShoppingListDtoToShoppingListEntity(data),
+        this.convertShoppingListDtoToShoppingListEntity(data, false),
       );
-
-    if (data.productList && data.productList.length > 0) {
-      data.productList.forEach(async (product) => {
-        const responseProduct = await this.productService.createProduct(
-          product,
-        );
-        if (!responseProduct) throw new Error('Product creation error');
-
-        const productOnShoppingListEntity: ProductOnShoppingLists = {
-          id: null,
-          productId: responseProduct.id,
-          shoppingListId: responseCreatedShoppingList.id,
-          price: product.price,
-          qty: product.qty,
-        };
-
-        const responseProductOnShoppingList =
-          await this.productService.createProductOnShoppingList(
-            productOnShoppingListEntity,
-          );
-
-        if (!responseProductOnShoppingList)
-          throw Error('Product on shoppingList error');
-      });
-    }
-
     const responseCreatedShoppingListOnUser =
       await this.createShoppingListOnUser(
         userId,
         responseCreatedShoppingList.id,
         true,
       );
-
     return responseCreatedShoppingListOnUser;
   }
 
@@ -113,9 +86,8 @@ export class ShoppingListService {
         { message: 'No data found for userId ' + userId + ' ', Error },
         HttpStatus.BAD_REQUEST,
       );
-
     return await this.repository.updateShoppingList(
-      this.convertShoppingListDtoToShoppingListEntity(data),
+      this.convertShoppingListDtoToShoppingListEntity(data, true),
     );
   }
 
@@ -131,7 +103,6 @@ export class ShoppingListService {
         { message: 'No data found for userId ' + userId + ' ', Error },
         HttpStatus.BAD_REQUEST,
       );
-
     return await this.repository.deleteShoppingListById(shoppingListId);
   }
 
@@ -140,22 +111,32 @@ export class ShoppingListService {
     shoppingListId: string,
     isOwner?: boolean,
   ): Promise<boolean> {
+    if (shoppingListId === undefined) shoppingListId === '';
     const response = await this.repository.countUserIdExistForShoppingListId(
       userId,
       shoppingListId,
       isOwner,
     );
-
     if (response === 0) return false;
-
     return true;
+  }
+
+  async getShoppingListWithUserIdAndProductIdExist(
+    userId: string,
+    productOnShoppingListId: string,
+  ) {
+    const response =
+      await this.repository.getShoppingListWithUserIdAndProductId(
+        userId,
+        productOnShoppingListId,
+      );
+    return response;
   }
 
   async getShoppingListByUserId(userId: string) {
     const responseShoppingLists = await this.repository.getShoppingListByUserId(
       userId,
     );
-
     if (!responseShoppingLists)
       throw new HttpException(
         {
@@ -164,7 +145,6 @@ export class ShoppingListService {
         },
         HttpStatus.BAD_REQUEST,
       );
-
     return responseShoppingLists;
   }
 
@@ -174,7 +154,6 @@ export class ShoppingListService {
   ) {
     const responseIfUserIdExistForShoppingList =
       await this.getUserIdExistForShoppingListId(userId, shoppingListId);
-
     if (!responseIfUserIdExistForShoppingList)
       throw new HttpException(
         { message: 'No data found for userId ' + userId + ' ', Error },
@@ -194,7 +173,6 @@ export class ShoppingListService {
         data.shoppingListId,
         true,
       );
-
     if (!responseIfUserIsOwnerExistAndIsOwnerForShoppingList)
       throw new HttpException(
         {
@@ -206,7 +184,6 @@ export class ShoppingListService {
         },
         HttpStatus.BAD_REQUEST,
       );
-
     if (!data.userEmailToShare)
       throw new HttpException(
         {
@@ -219,7 +196,6 @@ export class ShoppingListService {
     const responseGetUserByEmail = await this.userService.getUserByEmail(
       data.userEmailToShare,
     );
-
     if (!responseGetUserByEmail.email)
       throw new HttpException(
         {
@@ -228,7 +204,6 @@ export class ShoppingListService {
         },
         HttpStatus.BAD_REQUEST,
       );
-
     return await this.createShoppingListOnUser(
       responseGetUserByEmail.id,
       data.shoppingListId,
@@ -238,9 +213,10 @@ export class ShoppingListService {
 
   convertShoppingListDtoToShoppingListEntity(
     data: ShoppingListDto,
+    isUpdate: boolean,
   ): ShoppingList {
     const shoppingListEntity: ShoppingList = {
-      id: null,
+      id: isUpdate ? data.id : null,
       name: data.name,
       createdAt: new Date(),
     };

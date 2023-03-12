@@ -93,6 +93,7 @@ export class AuthService {
       refresh_token: refreshToken,
       nickname: nickname,
       email: email,
+      id: userId,
     };
   }
 }

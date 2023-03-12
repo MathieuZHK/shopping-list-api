@@ -41,7 +41,7 @@ export class ShoppingListController {
   deleteShoppingListById(
     @GetCurrentUserId() userId: string,
     @Param('id') shoppingListId: string,
-  ) {
+  ): Promise<ShoppingList> {
     return this.shoppingListService.deleteShoppingListByIdAndUserId(
       userId,
       shoppingListId,
@@ -57,11 +57,11 @@ export class ShoppingListController {
     return this.shoppingListService.updateShoppingList(userId, dto);
   }
 
-  @Get('productsOnShoppingListByShoppingId')
-  @HttpCode(HttpStatus.FOUND)
+  @Get('productsOnShoppingListByShoppingId/:id')
+  @HttpCode(HttpStatus.OK)
   getProductsOnShoppingListByShoppingId(
     @GetCurrentUserId() userId: string,
-    @Param('shoppingListId') shoppingListId: string,
+    @Param('id') shoppingListId: string,
   ) {
     return this.shoppingListService.getProductsListByShoppingListId(
       userId,

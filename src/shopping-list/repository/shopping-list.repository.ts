@@ -29,17 +29,22 @@ export class ShoppingListRepository {
 
   async getProductsByShoppingListId(shoppingListId: string) {
     return this.prisma.productOnShoppingLists.findMany({
+      orderBy: [
+        {
+          name: 'asc',
+        },
+      ],
       where: {
         shoppingListId: shoppingListId,
       },
-      include: {
-        product: {
-          select: {
-            id: true,
-            name: true,
-            barcode: true,
-          },
-        },
+      select: {
+        id: true,
+        name: true,
+        barcode: true,
+        price: true,
+        qty: true,
+        inCart: true,
+        shoppingListId: true,
       },
     });
   }
@@ -77,10 +82,26 @@ export class ShoppingListRepository {
   ) {
     return this.prisma.shoppingListOnUsers.count({
       where: {
-        userId: userId,
-        AND: {
-          shoppingListId: shoppingListId,
-          owner: isOwner,
+        AND: { userId: userId, shoppingListId: shoppingListId, owner: isOwner },
+      },
+    });
+  }
+
+  async getShoppingListWithUserIdAndProductId(
+    userId: string,
+    productOnShoppingListId: string,
+  ) {
+    return this.prisma.shoppingList.findMany({
+      include: {
+        users: {
+          where: {
+            id: userId,
+          },
+        },
+        products: {
+          where: {
+            id: productOnShoppingListId,
+          },
         },
       },
     });
