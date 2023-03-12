@@ -1,55 +1,28 @@
 import { Injectable } from '@nestjs/common';
-import { Product, ProductOnShoppingLists } from '@prisma/client';
+import { ProductOnShoppingLists } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ProductCartInfoDto } from '../dto/productCartInfoDto';
 
 @Injectable()
 export class ProductRepository {
   constructor(private prisma: PrismaService) {}
 
-  async createProduct(data: Product): Promise<Product> {
-    return this.prisma.product.create({
+  async createProductOnShoppingList(
+    name: string,
+    barcode: number,
+    shoppingListId: string,
+    price: number,
+    qty: number,
+    inCart: boolean,
+  ): Promise<ProductOnShoppingLists> {
+    return this.prisma.productOnShoppingLists.create({
       data: {
-        name: data.name,
-        barcode: data.barcode,
-      },
-    });
-  }
-
-  async createProductList(data: Product[]) {
-    return this.prisma.product.createMany({
-      data: data,
-      skipDuplicates: true,
-    });
-  }
-
-  async getProductById(productId: string): Promise<Product> {
-    return this.prisma.product.findUnique({
-      where: {
-        id: productId,
-      },
-    });
-  }
-
-  async getProductByName(productName: string): Promise<Product> {
-    return this.prisma.product.findUnique({
-      where: {
-        name: productName,
-      },
-    });
-  }
-
-  async getProductByBarcode(productBarcode: number): Promise<Product> {
-    return this.prisma.product.findUnique({
-      where: {
-        barcode: productBarcode,
-      },
-    });
-  }
-
-  async deleteProductById(productId: string): Promise<Product> {
-    return this.prisma.product.delete({
-      where: {
-        id: productId,
+        name: name,
+        barcode: barcode,
+        shoppingListId: shoppingListId,
+        price: price,
+        qty: qty,
+        inCart: inCart,
       },
     });
   }
@@ -62,25 +35,20 @@ export class ProductRepository {
     });
   }
 
-  async createProductOnShoppingList(
-    productId: string,
-    shoppingListId: string,
-    price: number,
-    qty: number,
-  ): Promise<ProductOnShoppingLists> {
-    return this.prisma.productOnShoppingLists.create({
-      data: {
-        productId: productId,
-        shoppingListId: shoppingListId,
-        price: price,
-        qty: qty,
-      },
-    });
-  }
-
   async createProductListOnShoppingList(data: ProductOnShoppingLists[]) {
     return this.prisma.productOnShoppingLists.createMany({
       data: data,
+    });
+  }
+
+  async updateProductOnShoppingListInCart(data: ProductCartInfoDto) {
+    return this.prisma.productOnShoppingLists.update({
+      where: {
+        id: data.id,
+      },
+      data: {
+        inCart: data.inCart,
+      },
     });
   }
 
@@ -90,9 +58,11 @@ export class ProductRepository {
         id: data.id,
       },
       data: {
+        name: data.name,
+        barcode: data.barcode,
         price: data.price,
         qty: data.qty,
-        productId: data.productId,
+        inCart: data.inCart,
       },
     });
   }
